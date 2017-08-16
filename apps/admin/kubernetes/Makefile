@@ -21,7 +21,8 @@ reset: clean.deployment app
 app: build deploy
 
 build: creds
-	gcloud container builds submit "$(BASEDIR)/../containers/." --tag=gcr.io/$(PROJECT)/admin
+	$(info Local docker build using minikube docker-env env vars: TODO)
+	docker build --rm -t admin "$(BASEDIR)/../containers/."
 
 deploy: creds
 	kubectl apply -f "$(BASEDIR)/admin-service.yaml"
@@ -39,12 +40,9 @@ retry: clean build deploy
 
 config:
 	@echo Creating ADMIN Yaml files based on samples and setting in your Makefile.properties
-	@cp "$(BASEDIR)/admin-deployment.sample.yaml" "$(BASEDIR)/admin-deployment.yaml"
-	$(call rewritefile,"$(BASEDIR)/admin-deployment.yaml",%PROJECT%,$(PROJECT))
-	@cp "$(BASEDIR)/admin-service.sample.yaml" "$(BASEDIR)/admin-service.yaml"
-	$(call rewritefile,"$(BASEDIR)/admin-service.yaml",%ADMINIP%,$(ADMINIP))
-	@cp "$(BASEDIR)/deployment.json" "$(BASEDIR)/../containers/default/api/k8s/createdeploy/deployment.json"
-	$(call rewritefile,"$(BASEDIR)/../containers/default/api/k8s/createdeploy/deployment.json",%PROJECT%,$(PROJECT))
+	$(info NO need for creating yaml files with minikube configuration)
+	$(info NO need for creating containers/default/api/k8s/createdeploy/deployment.json)
+	
 
 define rewritefile
 	@sed s/$(2)/$(3)/g <""$(1)"" >"$(BASEDIR)/.temp"

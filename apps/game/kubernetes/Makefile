@@ -21,7 +21,8 @@ reset: clean.deployment app
 	say "app refresh complete"
 
 build: creds
-	gcloud container builds submit "$(BASEDIR)/../containers/." --tag=gcr.io/$(PROJECT)/game
+	$(info Local docker build using minikube docker-env env vars: TODO)
+	docker build --rm -t game "$(BASEDIR)/../containers/."
 
 deploy: creds
 	kubectl apply -f "$(BASEDIR)/game-service.yaml"
@@ -39,10 +40,7 @@ retry: clean build deploy
 
 config:
 	@echo Creating GAME Yaml files based on samples and setting in your Makefile.properties
-	@cp "$(BASEDIR)/game-deployment-sample.yaml" "$(BASEDIR)/game-deployment.yaml"
-	$(call rewritefile,"$(BASEDIR)/game-deployment.yaml",%PROJECT%,$(PROJECT))
-	@cp "$(BASEDIR)/game-service-sample.yaml" "$(BASEDIR)/game-service.yaml"
-	$(call rewritefile,"$(BASEDIR)/game-service.yaml",%GAMEIP%,$(GAMEIP))
+	$(info NO need for creating yaml files with minikube configuration)
 	@cp "$(BASEDIR)/../containers/default/assets/js/config.sample.js" "$(BASEDIR)/../containers/default/assets/js/config.js"
 	$(call rewritefile,"$(BASEDIR)/../containers/default/assets/js/config.js",%APIHOST%,$(APIHOST))
 	$(call rewritefile,"$(BASEDIR)/../containers/default/assets/js/config.js",%ADMINHOST%,$(ADMINHOST))
