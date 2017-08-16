@@ -11,7 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-BASEDIR = $(shell pwd)
+
+$(info OS $(OS))
+ifeq ($(OS),Windows_NT)
+	BASEDIR = $(shell cd)
+else
+	BASEDIR = $(shell pwd)
+endif
+
+$(info BASEDIR = $(BASEDIR))
 
 include Makefile.properties
 

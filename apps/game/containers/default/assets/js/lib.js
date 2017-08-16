@@ -298,7 +298,7 @@ function PODSUI(pods, logwindow){
 
 function API(hostname){
 
-    this.debug = false;
+    this.debug = true;
     var apihostname = hostname;
     this.timeout = 2000;
     var apiprotocol = "http://"
@@ -361,7 +361,7 @@ function API(hostname){
 function DEPLOYMENTAPI(hostname, logwindow){
     if (typeof(logwindow)==='undefined') logwindow = new LOGWINDOW();
 
-    this.debug = false;
+    this.debug = true;
     var apihostname = hostname;
     this.timeout = 2000;
     var apiprotocol = "http://"
