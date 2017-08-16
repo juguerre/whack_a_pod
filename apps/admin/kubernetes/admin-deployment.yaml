@@ -14,19 +14,20 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: game-deployment
+  name: admin-deployment
 spec:
-  replicas: 4
+  replicas: 1
   strategy:
       type: RollingUpdate
   template:
     metadata:
       labels:
-        app: game
+        app: admin
     spec:
       containers:
-      - name: "game"
-        image: "gcr.io/%PROJECT%/game"
+      - name: "admin"
+        image: "admin"
+        imagePullPolicy: IfNotPresent
         ports:
         - name: "http"
           containerPort: 8080

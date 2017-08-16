@@ -18,8 +18,7 @@ metadata:
     name: game
   name: game
 spec:
-  type: LoadBalancer
-  loadBalancerIP: %GAMEIP% 
+  type: NodePort  
   ports:
     - name: "http"
       port: 80

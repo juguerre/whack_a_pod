@@ -11,19 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-apiVersion: v1
-kind: Service
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
-  labels:
-    name: admin
-  name: admin
+  name: game-deployment
 spec:
-  type: LoadBalancer
-  loadBalancerIP: %ADMINIP%
-  ports:
-    - name: "http"
-      port: 80
-      targetPort: 8080
-      protocol: TCP
-  selector:
-    app: admin
+  replicas: 4
+  strategy:
+      type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: game
+    spec:
+      containers:
+      - name: "game"
+        image: "game"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: "http"
+          containerPort: 8080
+          protocol: TCP
