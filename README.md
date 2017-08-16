@@ -1,112 +1,68 @@
-# Whack-a-pod
-This is a demo that can be used to show how resilient services running on
-Kubernetes can be. Main app shows a giant sign that flashes in various random
-colors.  Those colors come a Kubernetes powered microservice.  If the service
-goes down, the sign turns red. Your goal is to try and knock the service down
-by killing the Kubernetes pods that run the service. You can do that by
-whacking the pods wich are respresented as moles.
+# WHACK A POD MINIKUBE REFACTOR
 
-![Whack-a-pod Screenshot](screenshots/game.png "Screenshot")
+## Original README.md
 
-There is also a less busy verison of the game available at /next.html. This
-version has an advanced mode that allows someone to do a more visual
-explanation of the mechanics.
+Here you can find the original repository based on google cloud [tpryan/whack_a_pod](https://github.com/tpryan/whack_a_pod)
 
-![Next Screenshot](screenshots/next.png "Next Version")
+## Initial configuration
+We try not to use a local image registry so lets build images locally.
 
-The advanced version allows you to track the pod that is serving the color
-service and to simulate creating and destroying nodes.
+In this case is interesting to use the minikube's docker service. In that way the new generated images will be stored in the minikube's node.
 
-![Advanced Screenshot](screenshots/advanced.png "Advanced Version")
+```
+> minikube start
 
-## Getting Started
+> export NO_PROXY=$no_proxy,$(minikube ip)
 
-The current directions assume you are using Google Cloud Platform to take
-advantage of Container Engine to build a manage your Kubernetes cluster.  There
-is nothing preventing this app from *running* on a Kubernetes cluster hosted
-elsewhere, but the directions for setup assume Container Engine. If there is
-significant interest in these directions, I'll be happy to publish them (or
-better yet, accept a pull request.)
+> eval $(minikube docker-env)
 
-### Create and configure GCP project
-1. Create Project in Cloud Console
-1. Navigate to Compute Engine (to activate Compute Engine service)
-1. Navigate to the API Library and activate Container Builder API
+> docker ps
+
+CONTAINER ID        IMAGE                                      COMMAND                  CREATED             STATUS              PORTS               NAMES
+2e514ccf1b52        38bac66034a6                               "/sidecar --v=2 --..."   3 minutes ago       Up 3 minutes                            k8s_sidecar_kube-dns-910330662-vj7jp_kube-system_23cd9fcd-7dde-11e7-81ad-0800277a26e1_2
+6f1b2f53e0b6        732cedac8f80                               "/bin/sh -c 'node ..."   3 minutes ago       Up 3 minutes                            k8s_hello-nodejs_hello-nodejs-2015515387-gh50r_default_b19c5ae9-7dea-11e7-b46e-0800277a26e1_1
+dbe60bb3ce0f        732cedac8f80                               "/bin/sh -c 'node ..."   3 minutes ago       Up 3 minutes                            k8s_hello-nodejs_hello-nodejs-2015515387-m6cq7_default_106a0c1a-7dea-11e7-b46e-0800277a26e1_1
+2d8540befb1b        f7f45b9cb733                               "/dnsmasq-nanny -v..."   3 minutes ago       Up 3 minutes                            k8s_dnsmasq_kube-dns-910330662-vj7jp_kube-system_23cd9fcd-7dde-11e7-81ad-0800277a26e1_2
+05d746df2d80        732cedac8f80                               "/bin/sh -c 'node ..."   3 minutes ago       Up 3 minutes                            k8s_hello-nodejs_hello-nodejs-2015515387-4m662_default_861c5128-7deb-11e7-b46e-0800277a26e1_1
+ace13059c248        a8e00546bcf3                               "/kube-dns --domai..."   3 minutes ago       Up 3 minutes                            k8s_kubedns_kube-dns-910330662-vj7jp_kube-system_23cd9fcd-7dde-11e7-81ad-0800277a26e1_2
+....
+....
+
+```
 
 
-### Create Configs - Part 1
-1. Make a copy of `/Samples.properties`, renamed to `/Makefile.properties`
-1. Alter value for `PROJECT` to your project id
-1. Alter `ZONE` and `REGION` if you want to run this demo in a particular area.
-1. Alter `CLUSTER` if you want to call your cluster something other than
-`whack-a-pod`.
-1. Set `GAMEHOST`, `ADMINHOST`, and `APIHOST` if you have static host names for
-your cluster.
-
-### Build Infrastructure
-1. Open a terminal in `/infrastructure/`.
-1. Run `make build`.
-`make build` will do the following:
-    1. Create Kubernetes Cluster
-    1. Create 3 static ip addresses for use in the app
-
->If you get the error `ResponseError: code=503,
-message=Project projectname is not fully initialized with the default service
-accounts. Please try again later.` You need to navigfate to Compute Engine in
-Google Cloud console to activate Compute Engine service.
-
-### Create Configs - Part 2
-1. Open a terminal in `/`.
-1. Run `make config` this will create all your kubernetes yaml files and a few
-other things for you.
-1. This should create the following files:
-     1. /apps/admin/kubernetes/admin-deployment.yaml
-     1. /apps/admin/kubernetes/admin-service.yaml
-     1. /apps/game/containers/default/assets/js/config.js
-     1. /apps/game/kubernetes/game-deployment.yaml
-     1. /apps/game/kubernetes/game-service.yaml
-     1. /apps/api/kubernetes/api-deployment.yaml
-     1. /apps/api/kubernetes/api-service.yaml
-
-### Build Application
-1. Open a terminal in root of whack_a_pod location.
-1. Run `make build`
-1. Run `make deploy`
-1. When process finishes Browse to the the value of `GAMEHOST`.
-
-## Run demo
-There are two skins to the game.
-1. Carnival version:
-    *  http://[gamehost]/
-1. Google Cloud Next branded version:
-    * http://[gamehost]/next.html
-    * http://[gamehost]/advanced.html
-
-The advanced version of the game is a great demo for teaching some of the
-fundamentals of Kubernetes.  It allows you to cordon and uncordon nodes of the
-Kubernetes cluster to simulate Node failure. In addition it shows which Pod of
-the Replica Set is actually answering calls for the service.
-
-### Clean Up
-1. Open a terminal in `/`.
-1. Run `make clean`
-1. Open a terminal in `/infrastructure/`.
-1. Run `make clean`
-
-## Architecture
-There are three Kubernetes services that make up the whole application:
-1. Game
-Game contains all of the front end clients for the game, both the carnival
-version and the Google Cloud Next version.
-1. Admin
-Admin contains all of the logic for managing the whole application.  This is
-the application the front end calls to get a list of the pods running the
-color api, it also has calls to create and delete deployments, delete pods, and
-drain and uncordon nodes.
-1. Api
-Api contains two service calls: color and color-complete. Color is a random
-hexidecimal RGB color value. Color-complete is the same as color, but also
-sends the pod name of the pod that answered the service call.
+## Build local images
 
 
-"This is not an official Google Project."
+Under `apps\` we can find the 3 applications (api, admin, game). Each applicaction directory has a `containers` directory that stores the docker's 'Dockerfile'.
+
+On apps/api/containers execute:
+`docker build --rm -t api .`
+
+On apps/admin/containers execute:
+`docker build --rm -t admin .`
+
+On apps/api/containers execute:
+`docker build --rm -t game .`
+
+And check the list of images in kubernetes node:
+
+```
+> docker images
+
+REPOSITORY                                             TAG                 IMAGE ID            CREATED             SIZE
+game                                                   latest              124772af096f        3 seconds ago       441MB
+admin                                                  latest              7f58c8df9975        33 seconds ago      428MB
+api                                                    latest              81c22aa2bc14        3 minutes ago       428MB
+gcr.io/google_appengine/php                            latest              14bc2e9d5f67        20 hours ago        428MB
+hello-nodejs                                           1.0                 732cedac8f80        5 days ago          655MB
+gcr.io/google_containers/k8s-dns-sidecar-amd64         1.14.4              38bac66034a6        7 weeks ago         41.8MB
+gcr.io/google_containers/k8s-dns-kube-dns-amd64        1.14.4              a8e00546bcf3        7 weeks ago         49.4MB
+gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64   1.14.4              f7f45b9cb733        7 weeks ago         41.4MB
+gcr.io/google-containers/kube-addon-manager            v6.4-beta.2         0a951668696f        2 months ago        79.2MB
+gcr.io/google_containers/kubernetes-dashboard-amd64    v1.6.1              71dfe833ce74        3 months ago        134MB
+gcr.io/google_containers/kubernetes-dashboard-amd64    v1.5.1              1180413103fd        7 months ago        104MB
+...
+...
+
+```
