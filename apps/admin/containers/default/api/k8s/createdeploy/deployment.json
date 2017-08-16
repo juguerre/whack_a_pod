@@ -28,8 +28,8 @@
             "spec": {
                 "containers": [
                     {
-                        "image": "gcr.io/carnivaldemos/api",
-                        "imagePullPolicy": "Always",
+                        "image": "api",
+                        "imagePullPolicy": "IfNotPresent",
                         "name": "api",
                         "ports": [
                             {
