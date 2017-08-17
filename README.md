@@ -4,6 +4,20 @@
 
 Here you can find the original repository based on google cloud [tpryan/whack_a_pod](https://github.com/tpryan/whack_a_pod) Thank you very much!
 
+##Requirements
+
+**Software:**
+
+- minikube
+    + Windows: `choco install minikube`
+    + Linux: (v0.21) `curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.21.0/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/`
+- kubectl
+    + Windows: `choco install kubernetes-cli`
+    + Linux (ubuntu): `sudo snap install kubectl --classic`
+- make
+    + Windows: `choco install make`
+    + Linux: usually pre-intalled: `sudo apt-get install make`
+
 ## Initial configuration
 We try not to use a local image registry so lets build images locally inside minikube node.
 
@@ -30,27 +44,62 @@ ace13059c248        a8e00546bcf3                               "/kube-dns --doma
 
 ```
 
+> Windows OS: eval doesn't work on Windows
+> 
+> Set docker-env: `@FOR /f "tokens=*" %i IN ('minikube docker-env') DO @%i`
+
 
 ## App Configuration
 
 ### Makefile.properties
+Configure your current minikube-node-ip in [Makefile.properties](Makefile.properties).
 
+You can get your minikube ip just (with minikube started) just like this:
+`minikube ip`
+
+```
+CLUSTER="whack-a-pod"
+MINIKUBEHOST=<minikube-node-ip>
+GAMEIP=<minikube-node-ip>:30110
+ADMINIP=<minikube-node-ip>:30111
+APIIP=<minikube-node-ip>:30112
+GAMEHOST=$(GAMEIP)
+ADMINHOST=$(ADMINIP)
+APIHOST=$(APIIP)
+
+```
+
+## Game config.js
+
+### Windows OS
+`make config` target is not supported in Windows OS so some manual configuration is needed. Edit 
+`apps\game\containers\default\assets\js\config.js` and configure the minikube node ip (execute `minikube ip` to get the ip).
+
+```
+var servicehost = "<minikube-node-ip>:30112";
+var adminhost = "<minikube-node-ip>:30111";
+
+```
+
+### Linux OS
+
+Execute `make config`
 
 ## Build local images
 
 
 Under `apps\` we can find the 3 applications (api, admin, game). Each applicaction directory has a `containers` directory that stores the docker's 'Dockerfile'.
 
-On apps/api/containers execute:
-`docker build --rm -t api .`
 
-On apps/admin/containers execute:
-`docker build --rm -t admin .`
+Ensure that you reuse minikube node's docker service:
+> Linux: `eval $(minikube docker-env)`
+> Windows: `@FOR /f "tokens=*" %i IN ('minikube docker-env') DO @%i`
 
-On apps/api/containers execute:
-`docker build --rm -t game .`
+Then execute build target:
 
-And check the list of images in kubernetes node:
+`make build`
+
+And check the list of images in kubernetes node directly from your host console:
 
 ```
 > docker images
@@ -71,3 +120,49 @@ gcr.io/google_containers/kubernetes-dashboard-amd64    v1.5.1              11804
 ...
 
 ```
+
+## Deploy
+
+Execute from root project directory:
+
+`make deploy`
+
+Check pods and services:
+
+`kubectl get pods -o wide`
+
+```
+NAME                                READY     STATUS    RESTARTS   AGE       IP            NODE
+admin-deployment-1822891185-7x15k   1/1       Running   0          18h       172.17.0.23   minikube
+api-deployment-688510802-2c8lk      1/1       Running   0          18s       172.17.0.28   minikube
+api-deployment-688510802-323wp      1/1       Running   0          18s       172.17.0.13   minikube
+api-deployment-688510802-6f9ht      1/1       Running   0          18s       172.17.0.19   minikube
+api-deployment-688510802-7c8ng      1/1       Running   0          18s       172.17.0.15   minikube
+api-deployment-688510802-9jqh2      1/1       Running   0          18s       172.17.0.16   minikube
+api-deployment-688510802-bgrcp      1/1       Running   0          18s       172.17.0.26   minikube
+api-deployment-688510802-fst03      1/1       Running   0          18s       172.17.0.18   minikube
+api-deployment-688510802-h08fr      1/1       Running   0          18s       172.17.0.25   minikube
+api-deployment-688510802-jp4qk      1/1       Running   0          18s       172.17.0.14   minikube
+api-deployment-688510802-sjzrz      1/1       Running   0          18s       172.17.0.29   minikube
+api-deployment-688510802-x56lz      1/1       Running   0          18s       172.17.0.22   minikube
+api-deployment-688510802-zbhg8      1/1       Running   0          18s       172.17.0.21   minikube
+game-deployment-2520914164-6fgfg    1/1       Running   0          18h       172.17.0.20   minikube
+game-deployment-2520914164-h3h07    1/1       Running   0          18h       172.17.0.27   minikube
+game-deployment-2520914164-j0zsg    1/1       Running   0          18h       172.17.0.24   minikube
+game-deployment-2520914164-q7ksm    1/1       Running   0          18h       172.17.0.17   minikube
+```
+
+`kubectl get services -o wide`
+
+```
+NAME           CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE       SELECTOR
+admin          10.0.0.197   <nodes>       80:30111/TCP   18h       app=admin
+api            10.0.0.212   <nodes>       80:30112/TCP   18h       app=api
+game           10.0.0.124   <nodes>       80:30110/TCP   18h       app=game
+kubernetes     10.0.0.1     <none>        443/TCP        6d        <none>
+
+```
+
+## Execute Game app
+
+`minikube service game`
