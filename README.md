@@ -4,7 +4,7 @@
 
 Here you can find the original repository based on google cloud [tpryan/whack_a_pod](https://github.com/tpryan/whack_a_pod) Thank you very much!
 
-##Requirements
+## Requirements
 
 **Software:**
 
@@ -23,7 +23,7 @@ We try not to use a local image registry so lets build images locally inside min
 
 In this case is interesting to use the minikube's docker service. In that way the new generated images will be stored in the minikube's node.
 
-```
+```shell
 > minikube start --cpus 2 --memory 8192
 
 > export NO_PROXY=$no_proxy,$(minikube ip)
@@ -75,7 +75,7 @@ APIHOST=$(APIIP)
 `make config` target is not supported in Windows OS so some manual configuration is needed. Edit 
 `apps\game\containers\default\assets\js\config.js` and configure the minikube node ip (execute `minikube ip` to get the ip).
 
-```
+```php
 var servicehost = "<minikube-node-ip>:30112";
 var adminhost = "<minikube-node-ip>:30111";
 
@@ -93,6 +93,7 @@ Under `apps\` we can find the 3 applications (api, admin, game). Each applicacti
 
 Ensure that you reuse minikube node's docker service:
 > Linux: `eval $(minikube docker-env)`
+> 
 > Windows: `@FOR /f "tokens=*" %i IN ('minikube docker-env') DO @%i`
 
 Then execute build target:
@@ -101,7 +102,7 @@ Then execute build target:
 
 And check the list of images in kubernetes node directly from your host console:
 
-```
+```shell
 > docker images
 
 REPOSITORY                                             TAG                 IMAGE ID            CREATED             SIZE
@@ -129,9 +130,9 @@ Execute from root project directory:
 
 Check pods and services:
 
-`kubectl get pods -o wide`
+```shell
+> kubectl get pods -o wide
 
-```
 NAME                                READY     STATUS    RESTARTS   AGE       IP            NODE
 admin-deployment-1822891185-7x15k   1/1       Running   0          18h       172.17.0.23   minikube
 api-deployment-688510802-2c8lk      1/1       Running   0          18s       172.17.0.28   minikube
@@ -152,9 +153,10 @@ game-deployment-2520914164-j0zsg    1/1       Running   0          18h       172
 game-deployment-2520914164-q7ksm    1/1       Running   0          18h       172.17.0.17   minikube
 ```
 
-`kubectl get services -o wide`
 
-```
+```shell
+> kubectl get services -o wide
+
 NAME           CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE       SELECTOR
 admin          10.0.0.197   <nodes>       80:30111/TCP   18h       app=admin
 api            10.0.0.212   <nodes>       80:30112/TCP   18h       app=api
