@@ -1,3 +1,2 @@
 .DS_Store
-apps/game/containers/default/assets/js/config.js
 apps/*/kubernetes/.kube/*
