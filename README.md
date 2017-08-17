@@ -2,15 +2,15 @@
 
 ## Original README.md
 
-Here you can find the original repository based on google cloud [tpryan/whack_a_pod](https://github.com/tpryan/whack_a_pod)
+Here you can find the original repository based on google cloud [tpryan/whack_a_pod](https://github.com/tpryan/whack_a_pod) Thank you very much!
 
 ## Initial configuration
-We try not to use a local image registry so lets build images locally.
+We try not to use a local image registry so lets build images locally inside minikube node.
 
 In this case is interesting to use the minikube's docker service. In that way the new generated images will be stored in the minikube's node.
 
 ```
-> minikube start
+> minikube start --cpus 2 --memory 8192
 
 > export NO_PROXY=$no_proxy,$(minikube ip)
 
@@ -29,6 +29,11 @@ ace13059c248        a8e00546bcf3                               "/kube-dns --doma
 ....
 
 ```
+
+
+## App Configuration
+
+### Makefile.properties
 
 
 ## Build local images
