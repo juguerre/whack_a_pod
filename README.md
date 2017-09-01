@@ -14,6 +14,10 @@ Here you can find the original repository based on google cloud [tpryan/whack_a_
 - kubectl
     + Windows: `choco install kubernetes-cli`
     + Linux (ubuntu): `sudo snap install kubectl --classic`
+    + Linux (ubuntu sin snap):
+       + `curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl`
+       + `chmod +x ./kubectl`
+       + `sudo mv ./kubectl /usr/local/bin/kubectl`
 - make
     + Windows: `choco install make`
     + Linux: usually pre-intalled: `sudo apt-get install make`
