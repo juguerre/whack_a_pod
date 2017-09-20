@@ -22,13 +22,14 @@ Here you can find the original repository based on google cloud [tpryan/whack_a_
 We try not to use a local image registry so lets build images locally inside minikube node.
 
 In this case is interesting to use the minikube's docker service. In that way the new generated images will be stored in the minikube's node.
+> Note: `minikube start` uses `--vm-driver virtualbox` by default, use `--vm-driver none` to install minikube in the host it self. In this last case the `export` and `eval` commands are not needed. Intalling minikube directly in the host comes handy when your host is a VM (virtualbox) and is not posible to launch another VM on it.
 
 ```shell
-> minikube start --cpus 2 --memory 8192
+> sudo minikube start --cpus 2 --memory 8192
 
-> export NO_PROXY=$no_proxy,$(minikube ip)
+> export NO_PROXY=$no_proxy,$(sudo minikube ip)
 
-> eval $(minikube docker-env)
+> eval $(sudo minikube docker-env)
 
 > docker ps
 
@@ -55,7 +56,7 @@ ace13059c248        a8e00546bcf3                               "/kube-dns --doma
 Configure your current minikube-node-ip in [Makefile.properties](Makefile.properties).
 
 You can get your minikube ip just (with minikube started) just like this:
-`minikube ip`
+`sudo minikube ip`
 
 ```
 CLUSTER="whack-a-pod"
@@ -92,9 +93,9 @@ Under `apps\` we can find the 3 applications (api, admin, game). Each applicacti
 
 
 Ensure that you reuse minikube node's docker service:
-> Linux: `eval $(minikube docker-env)`
+> Linux: `eval $(sudo minikube docker-env)`
 > 
-> Windows: `@FOR /f "tokens=*" %i IN ('minikube docker-env') DO @%i`
+> Windows: `@FOR /f "tokens=*" %i IN ('sudo minikube docker-env') DO @%i`
 
 Then execute build target:
 
@@ -131,7 +132,7 @@ Execute from root project directory:
 Check pods and services:
 
 ```shell
-> kubectl get pods -o wide
+> sudo kubectl get pods -o wide
 
 NAME                                READY     STATUS    RESTARTS   AGE       IP            NODE
 admin-deployment-1822891185-7x15k   1/1       Running   0          18h       172.17.0.23   minikube
@@ -155,7 +156,7 @@ game-deployment-2520914164-q7ksm    1/1       Running   0          18h       172
 
 
 ```shell
-> kubectl get services -o wide
+> sudo kubectl get services -o wide
 
 NAME           CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE       SELECTOR
 admin          10.0.0.197   <nodes>       80:30111/TCP   18h       app=admin
@@ -167,4 +168,4 @@ kubernetes     10.0.0.1     <none>        443/TCP        6d        <none>
 
 ## Execute Game app
 
-`minikube service game`
+`sudo minikube service game`
