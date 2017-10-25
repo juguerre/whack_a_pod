@@ -25,6 +25,13 @@ limitations under the License.
     <script src="assets/js/config.js"></script>
     <script src="assets/js/lib.js"></script>
     <script src="assets/js/main.js"></script>
+    <script type="text/javascript">
+        function lee_json() {
+            $.getJSON("assets/js/highscores.json", function(datos) {
+                alert("Dato: " + datos["top1"]);
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="holder">
@@ -63,6 +70,7 @@ limitations under the License.
             <img id="bomb" src="assets/img/bomb_waiting.png" />
             <p>Click the bomb to whack all the pods at once!</p>
         </div>
+
         <div class="scoreboard">
             <table>
                 <tr>
@@ -72,6 +80,33 @@ limitations under the License.
                 <tr>
                     <th>Score:
                     <td class="total">0</td>
+                </tr>
+            </table>
+        </div>
+        <div class="highscore">
+            <table>
+                <th>
+                    High Scores
+                </th>
+                <tr>
+                    <td class="NameTop1">1. AAA....................</td>
+                    <td class="ScoreTop1">000</td>
+                </tr>
+                <tr>
+                    <td class="NameTop2">2. BBB....................</td>
+                    <td class="ScoreTop2">000</td>
+                </tr>
+                <tr>
+                    <td class="NameTop3">3. CCC....................</td>
+                    <td class="ScoreTop3">000</td>
+                </tr>
+                <tr>
+                    <td class="NameTop4">4. DDD....................</td>
+                    <td class="ScoreTop4">000</td>
+                </tr>
+                <tr>
+                    <td class="NameTop5">5. EEE....................</td>
+                    <td class="ScoreTop5">000</td>
                 </tr>
             </table>
         </div>
@@ -105,13 +140,16 @@ limitations under the License.
     <div id="start-modal" class="modal">
         <div class="modal-message">
             <h1>Welcome!</h1>
-            <p>Push the button to deploy to Kubernetes.
+            <p>Enter your Name and Push the button to deploy to Kubernetes.
             When ready, a whistle wil blow, and then you'll get to knock down
                Kubernetes pods/moles. The pods are keeping your 
                 service up. 
                 
             <p><strong>See if you can knock down enough of them to 
                 disrupt the service.</strong>
+            </p>
+            <p>
+                Your name: <input type="text" id="name" value="PlayerUnknown"><br>
             </p>
             <button id="deploy-start">Click to deploy</button>
             <br /><br />

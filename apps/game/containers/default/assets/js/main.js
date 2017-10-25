@@ -15,6 +15,7 @@ var default_duration = 40;
 
 // These are set in config.js, and are specific to your cluster setup
 var api = new API(servicehost);
+var apihs = new API(adminhost);
 var deploymentAPI = new DEPLOYMENTAPI(adminhost);
 var pods = new PODS();
 var podsUI = new PODSUI(pods);
@@ -33,16 +34,19 @@ document.addEventListener('DOMContentLoaded', function() {
     $(".timer").html(default_duration);
     setReport("Kubernetes service not started yet.");
     deploymentAPI.Delete();
+    localStorage.name = 'GameMole';
     var interval = Math.random() * 200000;
     document.querySelector("#bomb").addEventListener("click", bombClickHandler);
     document.querySelector("#deploy-start").addEventListener("click", startDeployment);
     document.querySelector("#restart").addEventListener("click", restart);
+    showHighscores();
 });
 
 function setReport(msg, color){
     if (typeof color == "undefined") color = "#333333";
     var report = document.querySelector(".report");
-    report.innerHTML = "<span>" + msg + "</span>";
+    var nombre = document.getElementById('name').value
+    report.innerHTML = "<span>" + msg + "<br>" + nombre + "</span>";
     report.style.color = color;
 }
 
@@ -61,6 +65,34 @@ function showTotals(){
     $("#total-score").html(score.GetTotal() + " points");
 }
 
+function showHighscores(){
+    apihs.HighScore(handleHighScores, handleHighScoreserror);
+
+}
+
+function handleHighScores(e){
+    document.querySelector(".highscore .NameTop1").innerHTML = e["NombreTop1"];
+    document.querySelector(".highscore .ScoreTop1").innerHTML = e["HighScoreTop1"];
+    document.querySelector(".highscore .NameTop2").innerHTML = e["NombreTop2"];
+    document.querySelector(".highscore .ScoreTop2").innerHTML = e["HighScoreTop2"];
+    document.querySelector(".highscore .NameTop3").innerHTML = e["NombreTop3"];
+    document.querySelector(".highscore .ScoreTop3").innerHTML = e["HighScoreTop3"];
+    document.querySelector(".highscore .NameTop4").innerHTML = e["NombreTop4"];
+    document.querySelector(".highscore .ScoreTop4").innerHTML = e["HighScoreTop4"];
+    document.querySelector(".highscore .NameTop5").innerHTML = e["NombreTop5"];
+    document.querySelector(".highscore .ScoreTop5").innerHTML = e["HighScoreTop5"];
+    /*alert("OK " + e["NombreTop1"]);*/
+
+}
+
+function handleHighScoreserror(e,textStatus, errorThrown){
+    alert("Error "+ errorThrown);
+}
+
+
+
+
+
 function startDeployment(){
     deploymentAPI.Create(initGame,genericError);
     hideModal("#start-modal");
@@ -72,7 +104,7 @@ function initGame(){
 }
 
 function getColor(){
-    api.Color(handleColor, handleColorError)
+    api.Color(handleColor, handleColorError);
 }
 
 function getTimeLeft(){
@@ -111,6 +143,10 @@ function showScore(){
         bombUI.Show();
         game.SetBombShowed();
     }
+}
+
+function setHighScore() {
+     document.querySelector(".highscore .NameTop1").innerHTML = score.GetTotal();
 }
 
 function getPods(){
