@@ -292,3 +292,33 @@ body{
     border: 1px solid #999;
 }
 
+.highscore{
+    padding-top: 10px;
+    width: 400px;
+    height: 200px;
+    margin: 180px auto 5px auto;
+    font-family: 'Rye', cursive;
+    font-size: 2rem;
+    color: #222
+    text-align: center;
+    background: url("holder_background.png");
+    background-size: cover;
+    border: 3px solid #333;
+    min-height: 50px;
+    position: absolute;
+    right: 30px;
+    top: 0px;
+}
+
+.highscore table{
+    margin: 0 10px;
+}
+.highscore th{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    color: red;
+}
+.highscore td{
+    font-size: 1rem;
+}

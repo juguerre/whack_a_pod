@@ -106,3 +106,18 @@
         curl_close($ch);
     }
 
+    function getHighScoreName($position) {
+        $datos_highscore = file_get_contents("/app/web/api/k8s/highscores.json");
+        $json_personas = json_decode($datos_highscore, true);
+        $valor="NombreTop".$position;
+        return $json_personas[$valor];
+        //return $json_personas;
+    }
+
+
+    function getHighScoreValue($position) {
+        $datos_highscore = file_get_contents("/app/web/api/k8s/highscores.json");
+        $json_personas = json_decode($datos_highscore, true);
+        $valor="HighScoreTop".$position;
+        return $json_personas[$valor];
+    }
