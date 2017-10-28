@@ -14,3 +14,4 @@
 FROM gcr.io/google_appengine/php:latest
 ENV DOCUMENT_ROOT /app/web
 ADD default /app/web
+VOLUME /app/web/api/k8s/data

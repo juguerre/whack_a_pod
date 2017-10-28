@@ -307,6 +307,7 @@ function API(hostname){
     var uri_color = "/api/color/";
     var uri_color_complete = "/api/color-complete/";
     var uri_highscore = "/api/k8s/highscore/"
+    var uri_savehighscore ="/api/k8s/savehighscore/"
 
     var ajaxProxy = function(url, successHandler, errorHandler, timeout) {
         timeout = typeof timeout !== 'undefined' ? timeout : this.timeout;
@@ -331,6 +332,10 @@ function API(hostname){
         return apiprotocol + apihostname + uri_highscore;
     }
 
+    var getSaveHighScoreURI = function() {
+        return apiprotocol + apihostname + uri_savehighscore;
+    }
+
     var getColorCompleteURI = function(){
         return apiprotocol + apihostname + uri_color_complete;
     }
@@ -351,13 +356,24 @@ function API(hostname){
         ajaxProxy(getColorURI(), successHandler, errorHandler, 400);
     };
 
-    /* this.HighScore = function(successHandler, errorHandler){
-        ajaxProxy(getHighScoreURI(), successHandler, errorHandler, 2000);
-    };*/
-
     this.HighScore = function(successHandler, errorHandler){
             $.ajax({
                 url: getHighScoreURI(),
+                success: successHandler,
+                error: errorHandler,
+                timeout: 2000
+
+            });
+            if (this.debug){
+                console.log("Called: ", url);
+            }
+    };
+
+
+    // cambiar esta función para ejecutar POST
+    this.SaveHighScore =  function(successHandler, errorHandler){
+            $.ajax({
+                url: getSaveHighScoreURI(),
                 success: successHandler,
                 error: errorHandler,
                 timeout: 2000

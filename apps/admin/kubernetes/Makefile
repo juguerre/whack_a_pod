@@ -30,15 +30,21 @@ build: creds
 
 deploy: creds
 	kubectl apply -f "$(BASEDIR)/admin-service.yaml"
-	kubectl apply -f "$(BASEDIR)/admin-deployment.yaml"	
+	kubectl apply -f "$(BASEDIR)/admin-deployment.yaml"
+	kubectl apply -f "$(BASEDIR)/admin-persistentvolume.yaml"
+	kubectl apply -f "$(BASEDIR)/admin-persistentvolume-claim.yaml"
 
-clean: clean.deployment clean.service 
+clean: clean.deployment clean.service clean.persistenvolume
 
 clean.deployment: env
 	-kubectl delete -f "$(BASEDIR)/admin-deployment.yaml"
 	
 clean.service: env
 	-kubectl delete -f "$(BASEDIR)/admin-service.yaml"
+
+clean.persistenvolume: env
+	-kubectl delete -f "$(BASEDIR)/admin-persistentvolume.yaml"
+	-kubectl delete -f "$(BASEDIR)/admin-persistentvolume-claim.yaml"
 
 retry: clean build deploy
 

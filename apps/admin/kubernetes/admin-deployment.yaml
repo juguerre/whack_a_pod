@@ -24,6 +24,10 @@ spec:
       labels:
         app: admin
     spec:
+      volumes:
+        - name: highscore-pv-storage
+          persistentVolumeClaim:
+            claimName: highscore-pv-claim
       containers:
       - name: "admin"
         image: "admin"
@@ -32,3 +36,6 @@ spec:
         - name: "http"
           containerPort: 8080
           protocol: TCP
+        volumeMounts:
+          - mountPath: "/app/default/api/k8s/data"
+            name: highscore-pv-storage
