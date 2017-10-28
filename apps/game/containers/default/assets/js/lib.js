@@ -26,6 +26,10 @@ function SCORE(){
         total++;
     }
 
+    this.ResetScore = function() {
+        total = 0;
+    }
+
     this.GetTotal = function(){
         return total;
     }
@@ -37,6 +41,89 @@ function SCORE(){
         return knockdowns;
     }
 
+}
+
+function HIGHSCORE(){
+    var NombreTop1="";
+    var HighScoreTop1=0;
+    var NombreTop2="";
+    var HighScoreTop2=0;
+    var NombreTop3="";
+    var HighScoreTop3=0;
+    var NombreTop4="";
+    var HighScoreTop4=0;
+    var NombreTop5="";
+    var HighScoreTop5=0;
+
+    this.Nombre1 = function($nombre){
+           NombreTop1=$nombre;
+    }
+    this.Nombre2 = function($nombre){
+           NombreTop2=$nombre;
+    }
+    this.Nombre3 = function($nombre){
+           NombreTop3=$nombre;
+    }
+    this.Nombre4 = function($nombre){
+           NombreTop4=$nombre;
+    }
+    this.Nombre5 = function($nombre){
+           NombreTop5=$nombre;
+    }
+    this.Score1 = function($score){
+           HighScoreTop1=$score;
+    }
+    this.Score2 = function($score){
+           HighScoreTop2=$score;
+    }
+    this.Score3 = function($score){
+           HighScoreTop3=$score;
+    }
+    this.Score4 = function($score){
+           HighScoreTop4=$score;
+    }
+    this.Score5 = function($score){
+           HighScoreTop5=$score;
+    }
+
+    this.GetNombreTop1 = function(){
+           return NombreTop1;
+    }
+    this.GetNombreTop2 = function(){
+           return NombreTop2;
+    }
+
+    this.GetNombreTop3 = function(){
+           return NombreTop3;
+    }
+
+    this.GetNombreTop4 = function(){
+           return NombreTop4;
+    }
+
+    this.GetNombreTop5 = function(){
+           return NombreTop5;
+    }
+
+    this.GetHighScoreTop1 = function(){
+           return HighScoreTop1;
+    }
+
+    this.GetHighScoreTop2 = function(){
+           return HighScoreTop2;
+    }
+
+    this.GetHighScoreTop3 = function(){
+           return HighScoreTop3;
+    }
+
+    this.GetHighScoreTop4 = function(){
+           return HighScoreTop4;
+    }
+
+    this.GetHighScoreTop5 = function(){
+           return HighScoreTop5;
+    }
 }
 
 function PODS(){
@@ -207,6 +294,7 @@ function POD(json){
 
 function PODSUI(pods, logwindow){
     var pods = pods;
+    var alldown = false;
     if (typeof(logwindow)==='undefined') logwindow = new LOGWINDOW();
 
     var alreadyShown = new Object();
@@ -225,6 +313,10 @@ function PODSUI(pods, logwindow){
 
             }
         }
+    }
+
+    this.GetAlldown = function (){
+        return alldown;
     }
 
     this.ClearMissing = function(podNames){
@@ -288,8 +380,13 @@ function PODSUI(pods, logwindow){
             pods.Add(json.items[i]);
         }
 
+        alldown=true;
+
         for (var i = 0; i < pods.Count(); i++){
             var pod = pods.Get(i);
+            if (pod["phase"] == "running" || pod["phase"]== "pending") {
+                alldown=false;
+            }
             this.AddPod(pod,whackHandler);
             logwindow.Log(pod);
         }
@@ -370,10 +467,12 @@ function API(hostname){
     };
 
 
-    // cambiar esta función para ejecutar POST
-    this.SaveHighScore =  function(successHandler, errorHandler){
+
+    this.SaveHighScore =  function(successHandler, errorHandler, $tophighscores){
             $.ajax({
                 url: getSaveHighScoreURI(),
+                type: 'POST',
+                data: $tophighscores,
                 success: successHandler,
                 error: errorHandler,
                 timeout: 2000
