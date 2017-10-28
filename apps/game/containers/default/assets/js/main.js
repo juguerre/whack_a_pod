@@ -24,6 +24,10 @@ var game = new GAME();
 var clock = "";
 var score = new SCORE();
 var sounds = new SOUNDS();
+var toph = new HIGHSCORE();
+var nombre ="";
+
+
 sounds.SetWhack("assets/audio/pop.wav",.5);
 sounds.SetExplosion("assets/audio/explosion.wav",.5);
 sounds.SetCountdown("assets/audio/countdown.mp3",.5);
@@ -45,24 +49,36 @@ document.addEventListener('DOMContentLoaded', function() {
 function setReport(msg, color){
     if (typeof color == "undefined") color = "#333333";
     var report = document.querySelector(".report");
-    var nombre = document.getElementById('name').value
+    nombre = document.getElementById('name').value
     report.innerHTML = "<span>" + msg + "<br>" + nombre + "</span>";
     report.style.color = color;
 }
 
 function endDeployment(){
+    var mensaje="";
     deploymentAPI.Delete();
     game.Stop();
     showTotals();
+    if ( updateHighScores() == true ) {
+     // si está entre los top 5 persistelo en disco
+        mensaje="{\"NombreTop1\":\""+toph.GetNombreTop1()+"\",\"HighScoreTop1\":"+toph.GetHighScoreTop1().toString()+",";
+        mensaje=mensaje + "\"NombreTop2\":\""+toph.GetNombreTop2()+"\",\"HighScoreTop2\":"+toph.GetHighScoreTop2().toString()+",";
+        mensaje=mensaje + "\"NombreTop3\":\""+toph.GetNombreTop3()+"\",\"HighScoreTop3\":"+toph.GetHighScoreTop3().toString()+",";
+        mensaje=mensaje + "\"NombreTop4\":\""+toph.GetNombreTop4()+"\",\"HighScoreTop4\":"+toph.GetHighScoreTop4().toString()+",";
+        mensaje=mensaje + "\"NombreTop5\":\""+toph.GetNombreTop5()+"\",\"HighScoreTop5\":"+toph.GetHighScoreTop5().toString()+"}";
+        saveHighscores(mensaje);
+        score.ResetScore();
+    }
     podsUI.ClearAll();
     setReport("Kubernetes service went away!");
     showModal("#end-modal");
 }
 
 function showTotals(){
+    $("#nombre").html(document.getElementById('name').value);
     $("#total-pods").html(score.GetPods() + " pods");
     $("#total-knockdowns").html(score.GetKnockDowns() + " service disruptions");
-    $("#total-score").html(score.GetTotal() + " points");
+    $("#total-score").html(document.querySelector(".scoreboard .total").innerHTML + " points");
 }
 
 function showHighscores(){
@@ -70,17 +86,80 @@ function showHighscores(){
 
 }
 
+function updateHighScores(){
+    var points=score.GetTotal();
+    if (points > toph.GetHighScoreTop1()) {
+        toph.Nombre5(toph.GetNombreTop4());
+        toph.Score5(toph.GetHighScoreTop4());
+        toph.Nombre4(toph.GetNombreTop3());
+        toph.Score4(toph.GetHighScoreTop3());
+        toph.Nombre3(toph.GetNombreTop2());
+        toph.Score3(toph.GetHighScoreTop2());
+        toph.Nombre2(toph.GetNombreTop1());
+        toph.Score2(toph.GetHighScoreTop1());
+        toph.Nombre1 (document.getElementById('name').value);
+        toph.Score1 (points);
+        return true;
+    }
+    if (points > toph.GetHighScoreTop2()) {
+        toph.Nombre5(toph.GetNombreTop4());
+        toph.Score5(toph.GetHighScoreTop4());
+        toph.Nombre4(toph.GetNombreTop3());
+        toph.Score4(toph.GetHighScoreTop3());
+        toph.Nombre3(toph.GetNombreTop2());
+        toph.Score3(toph.GetHighScoreTop2());
+        toph.Nombre2 (document.getElementById('name').value);
+        toph.Score2 (points);
+        return true;
+    }
+    if (points > toph.GetHighScoreTop3()) {
+        toph.Nombre5(toph.GetNombreTop4());
+        toph.Score5(toph.GetHighScoreTop4());
+        toph.Nombre4(toph.GetNombreTop3());
+        toph.Score4(toph.GetHighScoreTop3());
+        toph.Nombre3 (document.getElementById('name').value);
+        toph.Score3 (points);
+        return true;
+    }
+    if (points > toph.GetHighScoreTop4()) {
+        toph.Nombre5(toph.GetNombreTop4());
+        toph.Score5(toph.GetHighScoreTop4());
+        toph.Nombre4 (document.getElementById('name').value);
+        toph.Score4 (points);
+        return true;
+    }
+    if (points > toph.GetHighScoreTop5()) {
+        toph.Nombre5 (document.getElementById('name').value);
+        toph.Score5 (points);
+        return true;
+    }
+    return false;
+}
+
 function handleHighScores(e){
-    document.querySelector(".highscore .NameTop1").innerHTML = e["NombreTop1"];
-    document.querySelector(".highscore .ScoreTop1").innerHTML = e["HighScoreTop1"];
-    document.querySelector(".highscore .NameTop2").innerHTML = e["NombreTop2"];
-    document.querySelector(".highscore .ScoreTop2").innerHTML = e["HighScoreTop2"];
-    document.querySelector(".highscore .NameTop3").innerHTML = e["NombreTop3"];
-    document.querySelector(".highscore .ScoreTop3").innerHTML = e["HighScoreTop3"];
-    document.querySelector(".highscore .NameTop4").innerHTML = e["NombreTop4"];
-    document.querySelector(".highscore .ScoreTop4").innerHTML = e["HighScoreTop4"];
-    document.querySelector(".highscore .NameTop5").innerHTML = e["NombreTop5"];
-    document.querySelector(".highscore .ScoreTop5").innerHTML = e["HighScoreTop5"];
+
+    toph.Nombre1(e["NombreTop1"]);
+    toph.Nombre2(e["NombreTop2"]);
+    toph.Nombre3(e["NombreTop3"]);
+    toph.Nombre4(e["NombreTop4"]);
+    toph.Nombre5(e["NombreTop5"]);
+
+    toph.Score1(e["HighScoreTop1"]);
+    toph.Score2(e["HighScoreTop2"]);
+    toph.Score3(e["HighScoreTop3"]);
+    toph.Score4(e["HighScoreTop4"]);
+    toph.Score5(e["HighScoreTop5"]);
+
+    document.querySelector(".highscore .NameTop1").innerHTML = toph.GetNombreTop1();
+    document.querySelector(".highscore .ScoreTop1").innerHTML = toph.GetHighScoreTop1();
+    document.querySelector(".highscore .NameTop2").innerHTML = toph.GetNombreTop2();
+    document.querySelector(".highscore .ScoreTop2").innerHTML = toph.GetHighScoreTop2();
+    document.querySelector(".highscore .NameTop3").innerHTML = toph.GetNombreTop3();
+    document.querySelector(".highscore .ScoreTop3").innerHTML = toph.GetHighScoreTop3();
+    document.querySelector(".highscore .NameTop4").innerHTML = toph.GetNombreTop4();
+    document.querySelector(".highscore .ScoreTop4").innerHTML = toph.GetHighScoreTop4();
+    document.querySelector(".highscore .NameTop5").innerHTML = toph.GetNombreTop5();
+    document.querySelector(".highscore .ScoreTop5").innerHTML = toph.GetHighScoreTop5();
     /*alert("OK " + e["NombreTop1"]);*/
 
 }
@@ -89,7 +168,17 @@ function handleHighScoreserror(e,textStatus, errorThrown){
     alert("Error "+ errorThrown);
 }
 
+function saveHighscores($tophighscores) {
+    apihs.SaveHighScore(handleSaveHighScores, handleSaveHighScoreserror,$tophighscores);
+}
 
+function handleSaveHighScores(){
+    return;
+}
+
+function handleSaveHighScoreserror(e,textStatus, errorThrown){
+    alert("Error "+ errorThrown);
+}
 
 
 
@@ -132,8 +221,8 @@ function handleColor(e){
 
 function handleColorError(e,textStatus, errorThrown){
     if (game.GetState() == "running") {
-        setReport("Kubernetes service is DOWN!", "#FF0000");
-        alertYouKilledIt();
+        //setReport("Kubernetes service is DOWN!", "#FF0000");
+        //alertYouKilledIt();
     }
 }
 
@@ -159,6 +248,11 @@ function handlePods(e){
     }
 
     podsUI.DrawPods(e, whackHandler);
+    if (podsUI.GetAlldown()== true) {
+        setReport("Kubernetes service is DOWN!", "#FF0000");
+        alertYouKilledIt();
+    }
+
 }
 
 function handlePodsError(e){
