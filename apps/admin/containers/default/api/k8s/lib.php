@@ -107,7 +107,10 @@
     }
 
     function getHighScoreName($position) {
-        $datos_highscore = file_get_contents("/app/web/api/k8s/highscores.json");
+        if (checkHighScoreFile()==false) {
+            return "error";
+        }
+        $datos_highscore = file_get_contents("/app/default/api/k8s/data/highscores.json");
         $json_personas = json_decode($datos_highscore, true);
         $valor="NombreTop".$position;
         return $json_personas[$valor];
@@ -116,8 +119,28 @@
 
 
     function getHighScoreValue($position) {
-        $datos_highscore = file_get_contents("/app/web/api/k8s/highscores.json");
+        if (checkHighScoreFile()==false) {
+                    return "error";
+        }
+        $datos_highscore = file_get_contents("/app/default/api/k8s/data/highscores.json");
         $json_personas = json_decode($datos_highscore, true);
         $valor="HighScoreTop".$position;
         return $json_personas[$valor];
+    }
+
+    function checkHighScoreFile(){
+        $datos_highscore = file_get_contents("/app/default/api/k8s/data/highscores.json");
+        if ( $datos_highscore == false ){
+            if (!copy("/app/default/api/k8s/highscores.json", "/app/default/api/k8s/data/highscores.json")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function saveHighScoreFile($topscores) {
+        // dummy data para probar el mecanismo
+        $json = json_encode($topscores);
+        $datos_highscore = file_put_contents("/app/default/api/k8s/data/highscores.json", $json);
+        return true;
     }
