@@ -25,13 +25,6 @@ limitations under the License.
     <script src="assets/js/config.js"></script>
     <script src="assets/js/lib.js"></script>
     <script src="assets/js/main.js"></script>
-    <script type="text/javascript">
-        function lee_json() {
-            $.getJSON("assets/js/highscores.json", function(datos) {
-                alert("Dato: " + datos["top1"]);
-            });
-        }
-    </script>
 </head>
 <body>
     <div class="holder">
@@ -85,27 +78,35 @@ limitations under the License.
         </div>
         <div class="highscore">
             <table>
-                <th>
+                <th >
                     High Scores
                 </th>
-                <tr>
-                    <td class="NameTop1">1. AAA....................</td>
-                    <td class="ScoreTop1">000</td>
+            </table>
+            <table>
                 </tr>
                 <tr>
-                    <td class="NameTop2">2. BBB....................</td>
+                    <td class="Top1" width="10px">1. </td>
+                    <td class="NameTop1" width="500px">AAA....................</td>
+                    <td class="ScoreTop1" width="100px">000</td>
+                </tr>
+                <tr>
+                    <td class="Top1">2. </td>
+                    <td class="NameTop2">BBB....................</td>
                     <td class="ScoreTop2">000</td>
                 </tr>
                 <tr>
-                    <td class="NameTop3">3. CCC....................</td>
+                    <td class="Top1">3. </td>
+                    <td class="NameTop3">CCC....................</td>
                     <td class="ScoreTop3">000</td>
                 </tr>
                 <tr>
-                    <td class="NameTop4">4. DDD....................</td>
+                    <td class="Top4">4. </td>
+                    <td class="NameTop4">DDD....................</td>
                     <td class="ScoreTop4">000</td>
                 </tr>
                 <tr>
-                    <td class="NameTop5">5. EEE....................</td>
+                    <td class="Top5">5. </td>
+                    <td class="NameTop5">EEE....................</td>
                     <td class="ScoreTop5">000</td>
                 </tr>
             </table>
@@ -139,17 +140,20 @@ limitations under the License.
     
     <div id="start-modal" class="modal">
         <div class="modal-message">
-            <h1>Welcome!</h1>
-            <p>Enter your Name and Push the button to deploy to Kubernetes.
-            When ready, a whistle wil blow, and then you'll get to knock down
-               Kubernetes pods/moles. The pods are keeping your 
-                service up. 
-                
-            <p><strong>See if you can knock down enough of them to 
-                disrupt the service.</strong>
+            <h1>Bienvenido!</h1>
+            <p> Reglas:<br>
+                <li> Entra tu correo de trabajo para optar al premio</li>
+                <li> 1 Pod golpeado=1 punto</li>
+                <li> Todos los Pods en estado Terminated=Bonus de 100 puntos </li>
+                <li> Bomba golpea todos los Pods por tí=Bonus de 100 puntos</li>
+            </p>
+            <p>Entra tu correo  y pulsa el botón para realizar el deploy de los Pods en Kubernetes.
+            Cuando esté listo , sonará un pitido ,y deberás golpear sin piedad a los pods/moles.
+                Ellos se encargan de mantener el servicio activo.
+            <p><strong>Veamos si puedes terminar con todos los Pods e interrumpir el servicio.</strong>
             </p>
             <p>
-                Your name: <input type="text" id="name" value="PlayerUnknown"><br>
+                e-mail: <input type="text" id="name" value="PlayerUnknown" size="50"><br>
             </p>
             <button id="deploy-start">Click to deploy</button>
             <br /><br />
@@ -161,12 +165,12 @@ limitations under the License.
     </div>
     <div id="end-modal" class="modal">
         <div class="modal-message">
-            <h1>Good Job <span id="nombre"> </span> !!</h1>
-            <p>You did the following:</p>
+            <h1>Genial <span id="nombre"> </span> !!</h1>
+            <p>Has conseguido:</p>
             <ul>
-                <li>Killed <span id="total-pods">0</span></li>
-                <li>Caused <span id="total-knockdowns">0</span></li>
-                <li>For total of <span id="total-score">0</span></li>
+                <li>Abatidos <span id="total-pods">0</span></li>
+                <li>Provocado <span id="total-knockdowns">0</span></li>
+                <li>Un Total de  <span id="total-score">0</span></li>
             </ul>    
             <button id="restart">Restart</button>
         </div>

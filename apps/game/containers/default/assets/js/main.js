@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-var default_duration = 40; 
+var default_duration = 60;
 
 // These are set in config.js, and are specific to your cluster setup
 var api = new API(servicehost);
@@ -36,7 +36,7 @@ sounds.SetStartup("assets/audio/startup.mp3",.5);
 document.addEventListener('DOMContentLoaded', function() {
     $("#start-modal").show();
     $(".timer").html(default_duration);
-    setReport("Kubernetes service not started yet.");
+    setReport("Kubernetes service no iniciado.");
     deploymentAPI.Delete();
     localStorage.name = 'GameMole';
     var interval = Math.random() * 200000;
@@ -47,10 +47,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setReport(msg, color){
+
     if (typeof color == "undefined") color = "#333333";
     var report = document.querySelector(".report");
-    nombre = document.getElementById('name').value
-    report.innerHTML = "<span>" + msg + "<br>" + nombre + "</span>";
+    nombre = document.getElementById('name').value;
+    //report.innerHTML = "<span>" + msg + "<br>" + nombre + "</span>";
+    report.innerHTML = "<span><img id=logo src='assets/img/ARQ_LOGO_BIG_TRICOLOR_SMALL.png'/><br>"+msg+"</span>";
     report.style.color = color;
 }
 
@@ -70,15 +72,15 @@ function endDeployment(){
         score.ResetScore();
     }
     podsUI.ClearAll();
-    setReport("Kubernetes service went away!");
+    setReport("Kubernetes service se fué!");
     showModal("#end-modal");
 }
 
 function showTotals(){
     $("#nombre").html(document.getElementById('name').value);
     $("#total-pods").html(score.GetPods() + " pods");
-    $("#total-knockdowns").html(score.GetKnockDowns() + " service disruptions");
-    $("#total-score").html(document.querySelector(".scoreboard .total").innerHTML + " points");
+    $("#total-knockdowns").html(score.GetKnockDowns() + " paradas de servicio");
+    $("#total-score").html(document.querySelector(".scoreboard .total").innerHTML + " puntos");
 }
 
 function showHighscores(){
@@ -137,7 +139,6 @@ function updateHighScores(){
 }
 
 function handleHighScores(e){
-
     toph.Nombre1(e["NombreTop1"]);
     toph.Nombre2(e["NombreTop2"]);
     toph.Nombre3(e["NombreTop3"]);
@@ -168,6 +169,18 @@ function handleHighScoreserror(e,textStatus, errorThrown){
     alert("Error "+ errorThrown);
 }
 
+function padname(nombre){
+    var tempName=nombre;
+    var padvalue=50-nombre.length;
+    for (var i=0; i<padvalue; i++){
+        tempName+='.';
+
+    }
+    return tempName;
+
+}
+
+
 function saveHighscores($tophighscores) {
     apihs.SaveHighScore(handleSaveHighScores, handleSaveHighScoreserror,$tophighscores);
 }
@@ -185,7 +198,7 @@ function handleSaveHighScoreserror(e,textStatus, errorThrown){
 function startDeployment(){
     deploymentAPI.Create(initGame,genericError);
     hideModal("#start-modal");
-    setReport("Kubernetes starting up.");
+    setReport("Kubernetes service OK!");
 }
 
 function initGame(){
@@ -214,7 +227,7 @@ function handleColor(e){
 
     if (game.GetState() == "running"){
         game.SetServiceUp();
-        setReport("Kubernetes service is UP!", e);
+        setReport("Kubernetes service OK!", e);
     }
     
 }
@@ -249,7 +262,7 @@ function handlePods(e){
 
     podsUI.DrawPods(e, whackHandler);
     if (podsUI.GetAlldown()== true && podsUI.GetinProgress()==false) {
-        setReport("Kubernetes service is DOWN!", "#FF0000");
+        setReport("Kubernetes service KO!", "#FF0000");
         podsUI.EnableUpInProgress();
         alertYouKilledIt();
     }
@@ -266,7 +279,7 @@ function alertYouKilledIt(){
         console.log("Killed it.");
         game.SetServiceDown();
         score.KnockDown()
-        $(".alert .msg").html("You knocked down the service.");
+        $(".alert .msg").html("Has tumbado el servicio.");
         $(".alert").show();
         setTimeout(hideAlert, 3000);
     }
@@ -289,9 +302,9 @@ function bombBlastHandler(e){
     sounds.PlayExplosion();
     for (var i = 0; i < e.items.length; i++){
         var pod = e.items[i];
-        if (pod.status.phase == "Running"){
+        //if (pod.status.phase == "Running" pod.status.phase == "Pending"){
             killPod(pod.metadata.selfLink);
-        }
+        //}
     }
     bombUI.Explode();
 }
