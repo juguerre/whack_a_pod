@@ -248,8 +248,9 @@ function handlePods(e){
     }
 
     podsUI.DrawPods(e, whackHandler);
-    if (podsUI.GetAlldown()== true) {
+    if (podsUI.GetAlldown()== true && podsUI.GetinProgress()==false) {
         setReport("Kubernetes service is DOWN!", "#FF0000");
+        podsUI.EnableUpInProgress();
         alertYouKilledIt();
     }
 

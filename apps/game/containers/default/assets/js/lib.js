@@ -295,6 +295,7 @@ function POD(json){
 function PODSUI(pods, logwindow){
     var pods = pods;
     var alldown = false;
+    var upinprogress = false;
     if (typeof(logwindow)==='undefined') logwindow = new LOGWINDOW();
 
     var alreadyShown = new Object();
@@ -317,6 +318,14 @@ function PODSUI(pods, logwindow){
 
     this.GetAlldown = function (){
         return alldown;
+    }
+
+    this.GetinProgress = function (){
+        return upinprogress;
+    }
+
+    this.EnableUpInProgress = function () {
+        upinprogress = true;
     }
 
     this.ClearMissing = function(podNames){
@@ -386,6 +395,8 @@ function PODSUI(pods, logwindow){
             var pod = pods.Get(i);
             if (pod["phase"] == "running" || pod["phase"]== "pending") {
                 alldown=false;
+                upinprogress = false;
+
             }
             this.AddPod(pod,whackHandler);
             logwindow.Log(pod);
