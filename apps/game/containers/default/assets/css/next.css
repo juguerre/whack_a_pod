@@ -62,6 +62,24 @@ body{
     font-weight: 700;
 }
 
+.logo_arq {
+    position: absolute;
+    left: 650px;
+    top: 20px;
+    width: 337px;
+    height: 135px;
+    padding-top: 140px;
+    transition: color 0.2s ease;
+    -webkit-transition: -webkit-filter 0.2s ease;
+    color: #222;
+    text-align: center;
+    background: url("../img/ARQ_LOGO_BIG_TRICOLOR.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    #-webkit-filter: drop-shadow(2px 2px 3px #333);
+
+}
+
 .report span{
     font-weight: 900;
     display: block;
