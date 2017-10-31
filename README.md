@@ -59,6 +59,15 @@ ace13059c248        a8e00546bcf3                               "/kube-dns --doma
 
 ## App Configuration
 
+### /tmp/data directory
+Create directory /tmp/data in your minikube Host Server
+
+change owner and permisions of /tmp/data:
+`chown root.www-data /tmp/data`
+`chmod 775 /tmp/data`
+
+In this directory highscore file will be placed.......
+
 ### Makefile.properties
 Configure your current minikube-node-ip in [Makefile.properties](Makefile.properties).
 
