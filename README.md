@@ -61,10 +61,10 @@ ace13059c248        a8e00546bcf3                               "/kube-dns --doma
 
 ### /tmp/data directory
 Create directory /tmp/data in your minikube Host Server
-
+`sudo mkdir /tmp/data`
 change owner and permisions of /tmp/data:
-`chown root.www-data /tmp/data`
-`chmod 775 /tmp/data`
+`sudo chown root.www-data /tmp/data`
+`sudo chmod 775 /tmp/data`
 
 In this directory highscore file will be placed.......
 
